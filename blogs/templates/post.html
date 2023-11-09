@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+<script src="{% static 'js/comments.js' %}"></script>
+<link href="{% static 'css/post.css' %}" rel="stylesheet">
+{% endblock head %}
+
+{% block main %}
+
+{{post.name}}
+<p>
+    {{post.content}}
+</p>
+
+<template id="comment-form-template">
+    <form id="comment-form" class="comment-form" onsubmit="submitComment(event)">
+        {% csrf_token %}
+        {{comment_form}}
+        <button type="submit">Comment</button>
+        <button type="button" onclick="cancelReply(event)">Cancel</button>
+    </form>
+</template>
+
+
+<template id="comment-template">
+    <li class="comment">
+        <b>@<span class="comment-user">{{user}}</span></b>
+        <p class="comment-content">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Autem, blanditiis!</p>
+        <button type="button" onclick="reply(event)">Reply</button>
+        <div class="reply-section">
+            <ul loaded="0" class="replies"></ul>
+        </div>
+        <button type="button" onclick="loadReplies(event)"><span class="reply-count">0</span> replies</button>
+    </li>
+</template>
+
+<div class="comment-section">
+    <script type="text/javascript">$(".comment-section").append($("#comment-form-template")[0].content.cloneNode(true));</script>
+    <ul class="comments" id="comments" loaded="{{number_of_loaded_comments}}"></ul>
+</div>
+
+{% for comment in comment_list %}
+<script type="text/javascript">
+    (() => {
+        let comment = $("#comment-template")[0].content.cloneNode(true);
+        $(comment).find(".comment-content").text(`{{comment.content}}`);
+        $(comment).find(".comment-user").text(`{{comment.user}}`);
+        $(comment).find(".comment").attr("comment-id", `{{comment.id}}`);
+        if (`{{comment.replies}}` === "0") {
+            $(comment).find(".reply-count").parent().remove();
+        }
+        else {
+            $(comment).find(".reply-count").text(`{{comment.replies}}`);
+        }
+        $("#comments").append(comment);
+    })();
+</script>
+{% endfor %}
+
+{% if remaining_comments > 0 %}
+<button type="button" onclick="loadComments(event)" post="{{post.id}}">Load More</button>
+{% endif %}
+{% endblock main %}
