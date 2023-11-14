@@ -140,3 +140,24 @@ def comments(request: WSGIRequest):
         )
     else:
         raise Http404("Invalid form")
+
+
+@login_required
+def new_post(request: WSGIRequest, blog_id: int):
+    try:
+        manager = models.BlogManager.objects.select_related("blog").get(
+            blog_id=blog_id, user=request.user
+        )
+
+        blog = manager.blog
+    except ObjectDoesNotExist as e:
+        raise Http404(e)
+
+    context = {"blog": blog}
+
+    return render(request, "new-post.html", context)
+
+
+@login_required
+def save_post(request: WSGIRequest):
+    print(request.POST)

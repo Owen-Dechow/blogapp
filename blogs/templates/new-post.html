@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load static %}
+{% load blog_elements %}
+
+{% block head %}
+<script src="{% static 'js/post-builder.js' %}"></script>
+<link href="{% static 'css/new-post.css' %}" rel="stylesheet">
+{% endblock head %}
+
+{% block main %}
+
+
+<div class="post-editor">
+    <div class="col-left">
+        <div class="post-banner-panel" id="post-banner-panel"></div>
+        <div class="post-element-panel" id="post-element-panel"></div>
+    </div>
+    <div class="col-right">
+        <form onsubmit="saveForm(event)">
+            {% csrf_token %}
+            <button type="submit">Save</button>
+        </form>
+        <details>
+            <summary>Elements</summary>
+            <ul class="post-editor-toolbar">
+                {% tools_list 'ondragend="dragEnd(event)" ondragstart="dragStart(event)" draggable="true" class="tool-option"' %}
+                {% templates 'onfocus="elementFocus(event)" ondragenter="elementDragEnter(event)" ondragleave="elementDragLeave(event)" class="element"' %}
+            </ul>
+        </details>
+        <details>
+            <summary>Properties</summary>
+            <ul class="post-editor-properties">
+                {% property_list "updateStyle(event)" %}
+            </ul>
+        </details>
+    </div>
+
+    <script type="text/javascript">
+        $("#post-element-panel").on("dragover", elementPanelDragOver);
+        $("#post-element-panel").on("drop", elementPanelDrop)
+    </script>
+</div>
+
+{% endblock main %}
