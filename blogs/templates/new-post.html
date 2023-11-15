@@ -1,44 +1,76 @@
 {% extends "base.html" %}
 {% load static %}
-{% load blog_elements %}
 
 {% block head %}
 <script src="{% static 'js/post-builder.js' %}"></script>
 <link href="{% static 'css/new-post.css' %}" rel="stylesheet">
+
+<link href="{% static 'quill.snow.css' %}" rel="stylesheet">
+<script src="{% static 'quill.js' %}"></script>
 {% endblock head %}
 
 {% block main %}
 
-
-<div class="post-editor">
-    <div class="col-left">
-        <div class="post-banner-panel" id="post-banner-panel"></div>
-        <div class="post-element-panel" id="post-element-panel"></div>
-    </div>
-    <div class="col-right">
-        <form onsubmit="saveForm(event)">
+<div class="editor-wrapper">
+    <div class="powered-by">
+        <a target="_blank" href="https://quilljs.com/">Powered By Quill</a>
+        <form onsubmit="savePost(event)">
             {% csrf_token %}
             <button type="submit">Save</button>
         </form>
-        <details>
-            <summary>Elements</summary>
-            <ul class="post-editor-toolbar">
-                {% tools_list 'ondragend="dragEnd(event)" ondragstart="dragStart(event)" draggable="true" class="tool-option"' %}
-                {% templates 'onfocus="elementFocus(event)" ondragenter="elementDragEnter(event)" ondragleave="elementDragLeave(event)" class="element"' %}
-            </ul>
-        </details>
-        <details>
-            <summary>Properties</summary>
-            <ul class="post-editor-properties">
-                {% property_list "updateStyle(event)" %}
-            </ul>
-        </details>
     </div>
+    <cite style="display:none" license="https://github.com/quilljs/quill/blob/develop/LICENSE">
+        Copyright (c) 2017, Slab
+        Copyright (c) 2014, Jason Chen
+        Copyright (c) 2013, salesforce.com
+        All rights reserved.
 
-    <script type="text/javascript">
-        $("#post-element-panel").on("dragover", elementPanelDragOver);
-        $("#post-element-panel").on("drop", elementPanelDrop)
-    </script>
+        Redistribution and use in source and binary forms, with or without
+        modification, are permitted provided that the following conditions
+        are met:
+
+        1. Redistributions of source code must retain the above copyright
+        notice, this list of conditions and the following disclaimer.
+
+        2. Redistributions in binary form must reproduce the above copyright
+        notice, this list of conditions and the following disclaimer in the
+        documentation and/or other materials provided with the distribution.
+
+        3. Neither the name of the copyright holder nor the names of its
+        contributors may be used to endorse or promote products derived from
+        this software without specific prior written permission.
+
+        THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+        IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+        TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+        PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+        HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+        SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+        LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+        DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+        THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+        (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+        OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+    </cite>
+    <div id="editor">
+    </div>
 </div>
+
+<script>
+
+    var quill = new Quill('#editor', {
+        modules: {
+            toolbar: [
+                [{ 'header': 1 }, { 'header': 2 }, { 'header': [1, 2, 3, false] }],
+                ['bold', 'italic', 'underline', 'strike', { 'script': 'sub' }, { 'script': 'super' }, { 'color': [] }, { 'background': [] }, { 'font': [] }],
+                ['blockquote', 'code-block'],
+                [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'align': [] }, { 'indent': '-1' }, { 'indent': '+1' }],
+                ["link", "image"],
+                ['clean']
+            ]
+        },
+        theme: 'snow'
+    });
+</script>
 
 {% endblock main %}

@@ -3,9 +3,12 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.core.handlers.wsgi import WSGIRequest
 from django.db.models import Count
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from . import models
 from . import forms
+from bleach import clean, linkify, Cleaner
+from bleach.css_sanitizer import CSSSanitizer
+from bs4 import BeautifulSoup
 
 
 # Create your views here.
@@ -160,4 +163,43 @@ def new_post(request: WSGIRequest, blog_id: int):
 
 @login_required
 def save_post(request: WSGIRequest):
-    print(request.POST)
+    html = request.POST["content"]
+
+    allowed_tags = [
+        "a",
+        "br",
+        "p",
+        "h1",
+        "h2",
+        "h3",
+        "span",
+        "code",
+        "pre",
+        "blockquote",
+        "img",
+        "li",
+    ]
+
+    allowed_attributes = {x: ["class", "style"] for x in allowed_tags}
+    allowed_attributes["a"] += ["href", "target", "rel"]
+    allowed_attributes["img"] += ["scr"]
+
+    styles = [
+        "color",
+        "background-color",
+    ]
+
+    cleaner = Cleaner(
+        tags=allowed_tags,
+        attributes=allowed_attributes,
+        css_sanitizer=CSSSanitizer(allowed_css_properties=styles),
+    )
+
+    html = cleaner.clean(html)
+    html = linkify(html)
+
+    soup = BeautifulSoup(html, "html.parser")
+    for a in soup.find_all("a"):
+        a.attrs["target"] = "_blank"
+
+    return HttpResponse(soup.contents)
