@@ -164,6 +164,7 @@ def new_post(request: WSGIRequest, blog_id: int):
 @login_required
 def save_post(request: WSGIRequest):
     html = request.POST["content"]
+    # html = "<img src='https://example.com/image.jpg'>"
 
     allowed_tags = [
         "a",
@@ -182,21 +183,28 @@ def save_post(request: WSGIRequest):
 
     allowed_attributes = {x: ["class", "style"] for x in allowed_tags}
     allowed_attributes["a"] += ["href", "target", "rel"]
-    allowed_attributes["img"] += ["scr"]
+    allowed_attributes["img"] += ["src"]
+    allowed_attributes["span"] += ["content-editable"]
+    allowed_attributes["pre"] += ["spellcheck"]
+
+    schemas = ["https", "data"]
 
     styles = [
         "color",
         "background-color",
+        "top",
+        "margin-right",
+        "font-size",
     ]
 
     cleaner = Cleaner(
         tags=allowed_tags,
         attributes=allowed_attributes,
         css_sanitizer=CSSSanitizer(allowed_css_properties=styles),
+        protocols=schemas,
     )
 
     html = cleaner.clean(html)
-    html = linkify(html)
 
     soup = BeautifulSoup(html, "html.parser")
     for a in soup.find_all("a"):

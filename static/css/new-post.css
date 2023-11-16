@@ -4,21 +4,24 @@
     margin-top: 20px;
 }
 
-.powered-by {
+.head-margin {
     background-color: lightgrey;
     padding: 5px;
     border-radius: 10px 10px 0 0;
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
 
-.powered-by button[type=submit],
-.powered-by a {
+.head-margin button[type=submit],
+.head-margin a {
     all: unset;
+    color: gray;
+    font-family: monospace;
 }
 
-.powered-by button[type=submit]:hover,
-.powered-by a:hover {
+.head-margin button[type=submit]:hover,
+.head-margin a:hover {
     cursor: pointer;
     text-decoration: underline;
 }

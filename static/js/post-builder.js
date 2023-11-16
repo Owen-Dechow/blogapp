@@ -1,3 +1,6 @@
+var saveTimeoutHandler;
+var lastSave;
+
 function savePost(e) {
     e.preventDefault();
     $(e.target).find("button").attr("disabled", true);
@@ -20,10 +23,38 @@ function savePost(e) {
         type: "POST",
         data: data,
         success: (r) => {
-            console.log(r);
-            $(e.target).find("button").text("Saved");
             $(e.target).find("button").attr("disabled", false);
-            $("#editor").find(".ql-editor").html(r);
+
+            if (!saveTimeoutHandler)
+                $(e.target).find("button").text("Saved (No detected changes)");
         }
+    }).fail((r) => {
+        $(e.target).find("button").attr("disabled", false);
+        $(e.target).find("button").text("Save failed, try again");
     });
 }
+
+function checkChange() {
+    if (quill.root.innerHTML !== contentOnLastSave) {
+        changeDetected();
+    }
+
+    window.setTimeout(checkChange, 100);
+}
+
+function changeDetected() {
+    if (lastSave)
+        $(".save-post button[type=submit]").text(`Save unsaved changes (Last save ${lastSave})`);
+    else
+        $(".save-post button[type=submit]").text(`Save unsaved changes`);
+
+    if (saveTimeoutHandler)
+        window.clearTimeout(saveTimeoutHandler);
+
+    contentOnLastSave = quill.root.innerHTML;
+    saveTimeoutHandler = window.setTimeout(() => {
+        lastSave = new Date().toLocaleString();
+        $(".save-post").submit();
+        saveTimeoutHandler = null;
+    }, 5 * 1000);
+};
