@@ -1,83 +1,51 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% load static %}
 
 {% block head %}
-<script src="{% static 'js/post-builder.js' %}"></script>
-<link href="{% static 'css/new-post.css' %}" rel="stylesheet">
+  <script src="{% static 'js/post-builder.js' %}"></script>
+  <link href="{% static 'css/new-post.css' %}" rel="stylesheet" />
 
-
-<link rel="stylesheet" href="{% static 'quill/monokai-sublime.min.css' %}">
-<link href="{% static 'quill/quill.snow.css' %}" rel="stylesheet">
-<script src="{% static 'quill/highlight.min.js' %}"></script>
-<script src="{% static 'quill/quill.js' %}"></script>
-{% endblock head %}
+  <link rel="stylesheet" href="{% static 'vendored/monokai-sublime.min.css' %}" />
+  <link href="{% static 'vendored/quill.snow.css' %}" rel="stylesheet" />
+  <script src="{% static 'vendored/highlight.min.js' %}"></script>
+  <script src="{% static 'vendored/quill.js' %}"></script>
+{% endblock %}
 
 {% block main %}
-
-<div class="editor-wrapper">
+  <div class="editor-wrapper">
     <div class="head-margin">
-        <a target="_blank" href="https://quilljs.com/">Powered By Quill</a>
-        <form class="save-post" onsubmit="savePost(event)">
-            {% csrf_token %}
-            <button type="submit">(No detected changes)</button>
-        </form>
+      <a target="_blank" href="https://quilljs.com/">Powered By Quill</a>
+      <form class="save-post" onsubmit="savePost(event)">
+        {% csrf_token %}
+        <button type="submit">(No detected changes)</button>
+      </form>
     </div>
     <cite style="display:none" license="https://github.com/quilljs/quill/blob/develop/LICENSE">
-        Copyright (c) 2017, Slab
-        Copyright (c) 2014, Jason Chen
-        Copyright (c) 2013, salesforce.com
-        All rights reserved.
+      Copyright (c) 2017, Slab Copyright (c) 2014, Jason Chen Copyright (c) 2013, salesforce.com All rights reserved.
 
-        Redistribution and use in source and binary forms, with or without
-        modification, are permitted provided that the following conditions
-        are met:
+      Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 
-        1. Redistributions of source code must retain the above copyright
-        notice, this list of conditions and the following disclaimer.
+      1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
 
-        2. Redistributions in binary form must reproduce the above copyright
-        notice, this list of conditions and the following disclaimer in the
-        documentation and/or other materials provided with the distribution.
+      2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
 
-        3. Neither the name of the copyright holder nor the names of its
-        contributors may be used to endorse or promote products derived from
-        this software without specific prior written permission.
+      3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
 
-        THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
-        IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
-        TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
-        PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-        HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-        SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-        LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-        DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-        THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-        (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-        OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+      THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </cite>
-    <div id="editor">
-    </div>
-</div>
+    <div id="editor"></div>
+  </div>
 
-<script>
-
+  <script>
     var quill = new Quill('#editor', {
-        modules: {
-            syntax: true,
-            toolbar: [
-                [{ 'header': 1 }, { 'header': 2 }, { 'header': [1, 2, 3, false] }],
-                ['bold', 'italic', 'underline', 'strike', { 'script': 'sub' }, { 'script': 'super' }, { 'color': [] }, { 'background': [] }, { 'font': [] }],
-                ['blockquote', 'code-block'],
-                [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'align': [] }, { 'indent': '-1' }, { 'indent': '+1' }],
-                ["formula", "link", "image", "video"],
-                ['clean']
-            ]
-        },
-        theme: 'snow'
-    });
-
-    var contentOnLastSave = quill.root.innerHTML;
-    checkChange();
-</script>
-
-{% endblock main %}
+      modules: {
+        syntax: true,
+        toolbar: [[{ header: 1 }, { header: 2 }, { header: [1, 2, 3, false] }], ['bold', 'italic', 'underline', 'strike', { script: 'sub' }, { script: 'super' }, { color: [] }, { background: [] }, { font: [] }], ['blockquote', 'code-block'], [{ list: 'ordered' }, { list: 'bullet' }, { align: [] }, { indent: '-1' }, { indent: '+1' }], ['formula', 'link', 'image', 'video'], ['clean']]
+      },
+      theme: 'snow'
+    })
+    
+    var contentOnLastSave = quill.root.innerHTML
+    checkChange()
+  </script>
+{% endblock %}

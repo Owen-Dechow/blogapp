@@ -2,25 +2,29 @@
 
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Blogs{% endblock title %}</title>
-    <script src="{% static '/jquery-3.7.1.min.js' %}"></script>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      {% block title %}
+        Blogs
+      {% endblock %}
+    </title>
+    <script src="{% static '/vendored/jquery-3.7.1.min.js' %}"></script>
     {% block head %}
-    {% endblock head %}
-</head>
 
-<nav>
+    {% endblock %}
+  </head>
+
+  <nav>
     <a href="/">Home</a>
-</nav>
+  </nav>
 
-<body>
+  <body>
     <main>
-        {% block main %}
-        {% endblock main %}
-    </main>
-</body>
+      {% block main %}
 
+      {% endblock %}
+    </main>
+  </body>
 </html>
