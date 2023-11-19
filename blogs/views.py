@@ -1,18 +1,33 @@
 from django.shortcuts import render, get_object_or_404, Http404
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import login
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.core.handlers.wsgi import WSGIRequest
 from django.db.models import Count
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
 from . import models
 from . import forms
-from bleach import clean, linkify, Cleaner
-from bleach.css_sanitizer import CSSSanitizer
-from bs4 import BeautifulSoup
-
+from . import clean_html
 
 # Create your views here.
 COMMENT_LOAD_COUNT = 10
+
+
+def create_account(request: WSGIRequest):
+    if request.method == "GET":
+        form = forms.RegistrationForm()
+    else:
+        form = forms.RegistrationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return HttpResponseRedirect("/accounts/profile/")
+
+    return render(request, "accounts/create_account.html", {"form": form})
+
+
+def profile(request: WSGIRequest):
+    return render(request, "accounts/profile.html")
 
 
 def landing_page(request: WSGIRequest):
@@ -23,16 +38,17 @@ def landing_page(request: WSGIRequest):
     return render(request, "landing_page.html", context)
 
 
-def blog(request: WSGIRequest, blog_id: int):
+def blog(request: WSGIRequest, blog_name: str):
+    blog = get_object_or_404(models.Blog, name=blog_name)
     context = {
-        "blog": get_object_or_404(models.Blog, id=blog_id),
-        "posts": models.Post.objects.filter(blog=blog_id),
+        "blog": blog,
+        "posts": models.Post.objects.filter(blog=blog),
     }
 
     return render(request, "blog.html", context)
 
 
-def post(request: WSGIRequest, post_id: int):
+def post(request: WSGIRequest, blog_name: str, post_id: int):
     try:
         post = models.Post.objects.select_related("blog", "manager").get(id=post_id)
     except ObjectDoesNotExist as e:
@@ -146,68 +162,66 @@ def comments(request: WSGIRequest):
 
 
 @login_required
-def new_post(request: WSGIRequest, blog_id: int):
+def edit_post(request: WSGIRequest, blog_name: str, post_id: int = -1):
     try:
+        blog = models.Blog.objects.get(name=blog_name)
         manager = models.BlogManager.objects.select_related("blog").get(
-            blog_id=blog_id, user=request.user
+            blog=blog, user=request.user
         )
-
-        blog = manager.blog
     except ObjectDoesNotExist as e:
         raise Http404(e)
 
-    context = {"blog": blog}
+    if post_id == -1:
+        content = ""
+    else:
+        post = get_object_or_404(models.Post, id=post_id)
+        content = post.content
 
-    return render(request, "new-post.html", context)
+    context = {
+        "blog": blog,
+        "content": content,
+        "post_id": post_id,
+        "blog_name": blog_name,
+    }
+
+    return render(request, "edit_post.html", context)
 
 
 @login_required
 def save_post(request: WSGIRequest):
-    html = request.POST["content"]
-    # html = "<img src='https://example.com/image.jpg'>"
+    form = forms.SavePost(request.POST)
 
-    allowed_tags = [
-        "a",
-        "br",
-        "p",
-        "h1",
-        "h2",
-        "h3",
-        "span",
-        "code",
-        "pre",
-        "blockquote",
-        "img",
-        "li",
-    ]
+    if not form.is_valid():
+        raise Http404("Invalid save request")
 
-    allowed_attributes = {x: ["class", "style"] for x in allowed_tags}
-    allowed_attributes["a"] += ["href", "target", "rel"]
-    allowed_attributes["img"] += ["src"]
-    allowed_attributes["span"] += ["content-editable"]
-    allowed_attributes["pre"] += ["spellcheck"]
+    html = form.cleaned_data["content"]
+    post_id = form.cleaned_data["post_id"]
+    blog_name = form.cleaned_data["blog_name"]
 
-    schemas = ["https", "data"]
+    html = clean_html.clean_post(html)
 
-    styles = [
-        "color",
-        "background-color",
-        "top",
-        "margin-right",
-        "font-size",
-    ]
+    try:
+        blog = models.Blog.objects.get(name=blog_name)
+        manager = models.BlogManager.objects.select_related("blog").get(
+            user=request.user, blog=blog
+        )
+    except ObjectDoesNotExist as e:
+        raise Http404(e)
 
-    cleaner = Cleaner(
-        tags=allowed_tags,
-        attributes=allowed_attributes,
-        css_sanitizer=CSSSanitizer(allowed_css_properties=styles),
-        protocols=schemas,
-    )
+    if post_id == -1:
+        post = models.Post.create_from_blog_manager(manager, blog)
+    else:
+        post = models.Post.objects.get(id=post_id)
 
-    html = cleaner.clean(html)
+    post.content = html
+    post.save()
 
-    soup = BeautifulSoup(html, "html.parser")
-    for a in soup.find_all("a"):
-        a.attrs["target"] = "_blank"
+    return JsonResponse({"post-id": post.id})
 
-    return HttpResponse(soup.contents)
+
+def user(request: WSGIRequest, username: str):
+    ...
+
+
+def flag_comment(request: WSGIRequest, comment_id: str):
+    ...

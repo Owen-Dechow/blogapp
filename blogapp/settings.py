@@ -121,8 +121,7 @@ USE_TZ = True
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [
-    BASE_DIR / "blogapp" / "static",
-    BASE_DIR / "static",
+    BASE_DIR / "blogs" / "static",
 ]
 
 # Default primary key field type
@@ -134,3 +133,5 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
+
+LOGOUT_REDIRECT_URL = "/"

@@ -1,5 +1,20 @@
 from django import forms
+from django.contrib.auth.forms import UserCreationForm
 from . import models
+from django.contrib.auth.models import User
+
+
+class RegistrationForm(UserCreationForm):
+    class Meta:
+        model = User
+        fields = [
+            "first_name",
+            "last_name",
+            "username",
+            "email",
+            "password1",
+            "password2",
+        ]
 
 
 class Comment(forms.Form):
@@ -29,3 +44,11 @@ class ReplyRequest(forms.Form):
 class CommentRequest(forms.Form):
     post = forms.IntegerField()
     loaded = forms.IntegerField()
+
+
+class SavePost(forms.Form):
+    post_id = forms.IntegerField()
+    blog_name = forms.CharField(
+        max_length=models.Blog._meta.get_field("name").max_length,
+    )
+    content = forms.CharField()

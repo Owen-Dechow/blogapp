@@ -1,0 +1,10 @@
+.ql-toolbar.ql-snow .ql-picker.ql-expanded .ql-picker-label,
+.ql-toolbar.ql-snow,
+.ql-container.ql-snow,
+.ql-snow .ql-tooltip input[type=text] {
+    border-color: var(--grey1);
+}
+
+.ql-editor {
+    background-color: var(--light)
+}

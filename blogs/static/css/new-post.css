@@ -2,10 +2,11 @@
     max-width: 800px;
     margin-inline: auto;
     margin-top: 20px;
+    padding-inline: 5px;
 }
 
 .head-margin {
-    background-color: lightgrey;
+    background-color: var(--grey1);
     padding: 5px;
     border-radius: 10px 10px 0 0;
     display: flex;
@@ -16,7 +17,7 @@
 .head-margin button[type=submit],
 .head-margin a {
     all: unset;
-    color: gray;
+    color: var(--grey2);
     font-family: monospace;
 }
 

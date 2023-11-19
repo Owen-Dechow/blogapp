@@ -6,7 +6,9 @@ from django.contrib.auth.models import User
 class Blog(models.Model):
     __str__ = lambda self: self.name
 
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
+    header = models.CharField(max_length=100, unique=True)
+
     owner = models.ForeignKey(
         to="BlogManager",
         on_delete=models.CASCADE,
@@ -14,6 +16,17 @@ class Blog(models.Model):
         blank=True,
         null=True,
     )
+
+    @staticmethod
+    def get_real_name(name: str):
+        url_name = ""
+        for l in name:
+            if l.isalpha() or l.isdigit():
+                url_name += l
+
+    def save(self, *args, **kwargs):
+        self.url_name = self.get_real_name(self.header)
+        super().save(*args, **kwargs)
 
 
 class BlogManager(models.Model):
@@ -28,7 +41,7 @@ class BlogManager(models.Model):
 
 
 class Post(models.Model):
-    __str__ = lambda self: self.name
+    __str__ = lambda self: self.name if self.name else f"post #: {self.id}"
 
     manager = models.ForeignKey(
         to="BlogManager", on_delete=models.CASCADE, related_name="Post_manager"
@@ -38,7 +51,15 @@ class Post(models.Model):
     )
 
     name = models.CharField(max_length=100)
-    content = models.CharField(max_length=100)
+    content = models.TextField()
+
+    @classmethod
+    def create_from_blog_manager(cls, blog_manager: BlogManager, blog: Blog):
+        post = cls()
+        post.manager = blog_manager
+        post.blog = blog
+
+        return post
 
 
 class Comment(models.Model):
@@ -75,10 +96,6 @@ class CommentFlag(models.Model):
     comment = models.ForeignKey(
         to="Comment", on_delete=models.CASCADE, related_name="CommentFlag_comment"
     )
-    manager = models.ForeignKey(
-        to="BlogManager", on_delete=models.CASCADE, related_name="CommentFlag_manager"
-    )
-    reason = models.CharField(max_length=100)
 
 
 class Subscription(models.Model):

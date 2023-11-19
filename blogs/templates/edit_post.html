@@ -1,14 +1,16 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load mark_html %}
 
 {% block head %}
   <script src="{% static 'js/post-builder.js' %}"></script>
   <link href="{% static 'css/new-post.css' %}" rel="stylesheet" />
 
-  <link rel="stylesheet" href="{% static 'vendored/monokai-sublime.min.css' %}" />
-  <link href="{% static 'vendored/quill.snow.css' %}" rel="stylesheet" />
-  <script src="{% static 'vendored/highlight.min.js' %}"></script>
-  <script src="{% static 'vendored/quill.js' %}"></script>
+  <link rel="stylesheet" href="{% static 'vendor/monokai-sublime.min.css' %}" />
+  <link href="{% static 'vendor/quill.snow.css' %}" rel="stylesheet" />
+  <link href="{% static 'css/quill.snow.override.css' %}" rel="stylesheet" />
+  <script src="{% static 'vendor/highlight.min.js' %}"></script>
+  <script src="{% static 'vendor/quill.js' %}"></script>
 {% endblock %}
 
 {% block main %}
@@ -33,19 +35,24 @@
 
       THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </cite>
-    <div id="editor"></div>
-  </div>
+    <div id="editor" post-id="{{ post_id }}" blog-name="{{ blog_name }}"></div>
 
-  <script>
-    var quill = new Quill('#editor', {
-      modules: {
-        syntax: true,
-        toolbar: [[{ header: 1 }, { header: 2 }, { header: [1, 2, 3, false] }], ['bold', 'italic', 'underline', 'strike', { script: 'sub' }, { script: 'super' }, { color: [] }, { background: [] }, { font: [] }], ['blockquote', 'code-block'], [{ list: 'ordered' }, { list: 'bullet' }, { align: [] }, { indent: '-1' }, { indent: '+1' }], ['formula', 'link', 'image', 'video'], ['clean']]
-      },
-      theme: 'snow'
-    })
-    
-    var contentOnLastSave = quill.root.innerHTML
-    checkChange()
-  </script>
+    <template class="starting-content">{{ content|mark_safe }}</template>
+
+    <script>
+      var quill = new Quill('#editor', {
+        modules: {
+          syntax: true,
+          toolbar: [[{ header: 1 }, { header: 2 }, { header: [1, 2, 3, false] }], ['bold', 'italic', 'underline', 'strike', { script: 'sub' }, { script: 'super' }, { color: [] }, { background: [] }, { font: [] }], ['blockquote', 'code-block'], [{ list: 'ordered' }, { list: 'bullet' }, { align: [] }, { indent: '-1' }, { indent: '+1' }], ['formula', 'link', 'image', 'video'], ['clean']]
+        },
+        theme: 'snow'
+      })
+      
+      quill.root.innerHTML = $('.starting-content').html()
+      window.setTimeout(() => {
+        contentOnLastSave = quill.root.innerHTML
+        checkChange()
+      }, 100)
+    </script>
+  </div>
 {% endblock %}

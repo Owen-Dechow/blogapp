@@ -1,13 +1,12 @@
 var saveTimeoutHandler;
 var lastSave;
+var saving;
+var contentOnLastSave;
 
 function savePost(e) {
     e.preventDefault();
     $(e.target).find("button").attr("disabled", true);
     $(e.target).find("button").text("Saving ...");
-
-    let postId = $(".editor").attr("post-id");
-    if (!postId) postId = -1;
 
     let formdata = $(e.target).serializeArray();
     let data = {};
@@ -15,20 +14,27 @@ function savePost(e) {
         data[obj.name] = obj.value;
     });
 
-    data["content"] = quill.root.innerHTML.trim();
-    data["post-id"] = postId;
+    console.log(quill.root.innerHTML);
+    contentOnLastSave = quill.root.innerHTML;
+    data["content"] = contentOnLastSave;
+    data["post_id"] = $("#editor").attr("post-id");
+    data["blog_name"] = $("#editor").attr("blog-name");
 
+    saving = true;
     $.ajax({
-        url: "/save-post",
+        url: "/save-post/",
         type: "POST",
         data: data,
         success: (r) => {
+            saving = false;
             $(e.target).find("button").attr("disabled", false);
+            $("#editor").attr("post-id", r["post-id"]);
 
             if (!saveTimeoutHandler)
                 $(e.target).find("button").text("Saved (No detected changes)");
         }
     }).fail((r) => {
+        saving = false;
         $(e.target).find("button").attr("disabled", false);
         $(e.target).find("button").text("Save failed, try again");
     });
@@ -42,6 +48,17 @@ function checkChange() {
     window.setTimeout(checkChange, 100);
 }
 
+function preventDoubleSave() {
+    if (saving) {
+        saveTimeoutHandler = window.setTimeout(preventDoubleSave, 100);
+        return;
+    }
+
+    lastSave = new Date().toLocaleString();
+    $(".save-post").submit();
+    saveTimeoutHandler = null;
+}
+
 function changeDetected() {
     if (lastSave)
         $(".save-post button[type=submit]").text(`Save unsaved changes (Last save ${lastSave})`);
@@ -52,9 +69,5 @@ function changeDetected() {
         window.clearTimeout(saveTimeoutHandler);
 
     contentOnLastSave = quill.root.innerHTML;
-    saveTimeoutHandler = window.setTimeout(() => {
-        lastSave = new Date().toLocaleString();
-        $(".save-post").submit();
-        saveTimeoutHandler = null;
-    }, 5 * 1000);
+    saveTimeoutHandler = window.setTimeout(preventDoubleSave, 5 * 1000);
 };

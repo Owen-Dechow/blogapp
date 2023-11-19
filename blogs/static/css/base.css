@@ -1,0 +1,40 @@
+:root {
+    --prime: #912727;
+    --light: #efefef;
+    --dark: #363636;
+
+    --grey1: grey;
+    --grey2: lightgrey;
+}
+
+body {
+    background-color: var(--grey2);
+    margin: 0;
+    color: var(--dark)
+}
+
+nav {
+    color: var(--light);
+    background-color: var(--prime);
+    display: flex;
+}
+
+nav a {
+    margin: 10px;
+    text-decoration: none;
+    color: inherit;
+    background-color: inherit;
+    position: relative;
+}
+
+nav a:first-child {
+    margin-right: auto;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+footer {
+    min-height: 20px;
+}
