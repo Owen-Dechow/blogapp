@@ -56,16 +56,34 @@
     color: var(--dark);
 }
 
+
+.comment-buttons {
+    display: flex;
+    justify-content: right;
+    align-items: center;
+    height: 1rem;
+    gap: 5px;
+}
+
 .reply-button {
     all: unset;
-    display: block;
-    margin-left: auto;
 }
 
 .reply-button:hover {
     cursor: pointer;
     text-decoration: underline;
 }
+
+.flag-comment-form button {
+    all: unset;
+    display: flex;
+    height: 1.2rem;
+}
+
+.flag-comment-form button:hover {
+    filter: brightness(75%);
+}
+
 
 .comment-form {
     background-color: var(--grey1);
@@ -135,22 +153,5 @@
 }
 
 .load-more-comments-button:hover {
-    text-decoration: underline;
-}
-
-.flag-comment-form {
-    display: inline-block;
-    border-radius: 5px 5px 0 0;
-    background-color: var(--grey1);
-    padding: 3px;
-    margin-left: 5px;
-}
-
-.flag-comment-form button {
-    all: unset;
-    color: var(--prime);
-}
-
-.flag-comment-form button:hover {
     text-decoration: underline;
 }

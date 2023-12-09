@@ -223,5 +223,9 @@ def user(request: WSGIRequest, username: str):
     ...
 
 
+@login_required
 def flag_comment(request: WSGIRequest, comment_id: str):
-    ...
+    flag = models.CommentFlag()
+    flag.comment = get_object_or_404(models.Comment, id=comment_id)
+    flag.save()
+    return HttpResponse()

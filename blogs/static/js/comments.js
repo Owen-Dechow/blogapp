@@ -130,7 +130,11 @@ function flagComment(e) {
     $.ajax({
         method: "POST",
         url: `/flag-comment/${commentId}`,
-        success: () => { alert("Comment reported: awaiting review."); }
+        data: $(e.target).serialize(),
+        success: () => {
+            alert("Comment reported: awaiting review.");
+            e.target.remove();
+        }
     }).fail(() => {
         alert("Report failed to send. Please try again.");
     });

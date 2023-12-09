@@ -91,7 +91,7 @@ class Comment(models.Model):
 
 
 class CommentFlag(models.Model):
-    __str__ = lambda self: f"{self.manager} - {self.comment}"
+    __str__ = lambda self: f"{self.comment}"
 
     comment = models.ForeignKey(
         to="Comment", on_delete=models.CASCADE, related_name="CommentFlag_comment"

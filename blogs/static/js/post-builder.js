@@ -2,6 +2,7 @@ var saveTimeoutHandler;
 var lastSave;
 var saving;
 var contentOnLastSave;
+var bannerImageSaved = true;
 
 function savePost(e) {
     e.preventDefault();
@@ -71,3 +72,17 @@ function changeDetected() {
     contentOnLastSave = quill.root.innerHTML;
     saveTimeoutHandler = window.setTimeout(preventDoubleSave, 5 * 1000);
 };
+
+function selectBannerImage(e) {
+    $(e.target).find("input[type=file]").click();
+}
+
+function bannerImageSelected(e) {
+    let file = e.target.files[0];
+    let reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = re => {
+        $(e.target).closest(".banner-select").find("img").attr("src", re.target.result);
+        bannerImageSaved = false;
+    };
+}

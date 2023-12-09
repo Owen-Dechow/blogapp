@@ -65,13 +65,17 @@
     <template id="comment-template">
       <li class="comment">
         <a href="accounts/u/{{ user }}" class="comment-user-tag">@<span class="comment-user">{{ user }}</span></a>
-        <form class="flag-comment-form" onsubmit="flagComment(event)">
-          {% csrf_token %}
-          <button type="submit">Report</button>
-        </form>
         <div class="background-area">
           <p class="comment-content">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Autem, blanditiis!</p>
-          <button class="reply-button" type="button" onclick="reply(event)">Reply</button>
+          <div class="comment-buttons">
+            {% if user.is_authenticated %}
+              <button class="reply-button" type="button" onclick="reply(event)">Reply</button>
+              <form class="flag-comment-form" onsubmit="flagComment(event)">
+                {% csrf_token %}
+                <button type="submit"><img src="{% static 'media/flag.svg' %}" alt="flag" /></button>
+              </form>
+            {% endif %}
+          </div>
         </div>
         <div class="reply-section">
           <ul loaded="0" class="replies"></ul>

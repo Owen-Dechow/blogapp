@@ -1,0 +1,51 @@
+.editor-wrapper {
+    max-width: 800px;
+    margin-top: 20px;
+    margin-inline: auto;
+    padding-inline: 5px;
+}
+
+.head-margin {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px;
+    border-radius: 10px 10px 0 0;
+    background-color: var(--grey1);
+
+    & button[type=submit],
+    & a {
+        all: unset;
+        color: var(--grey2);
+        font-family: monospace;
+    }
+
+    & button[type=submit]:hover,
+    & a:hover {
+        text-decoration: underline;
+        cursor: pointer;
+    }
+}
+
+.banner-select {
+    position: relative;
+    height: 150px;
+    background-color: var(--prime);
+
+    & button[type=button]{
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        border-radius: 3px;
+        border: 1px solid;
+        color: var(--light);
+        background-color: var(--grey1);
+        box-shadow: 3px 3px 10px var(--dark);
+    }
+
+    & img{
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
+    }
+}
