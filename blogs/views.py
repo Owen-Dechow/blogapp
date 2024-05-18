@@ -49,10 +49,16 @@ def blog(request: WSGIRequest, blog_name: str):
 
 
 def post(request: WSGIRequest, blog_name: str, post_id: int):
-    try:
-        post = models.Post.objects.select_related("blog", "manager").get(id=post_id)
-    except ObjectDoesNotExist as e:
-        raise Http404(e)
+    post = get_object_or_404(
+        models.Post.objects.select_related("blog", "manager"), id=post_id
+    )
+
+    if blog_name != post.blog.name:
+        raise Http404("Post is not in this blog")
+
+    can_edit = (
+        models.BlogManager.objects.filter(user=request.user, blog=post.blog).count() > 0
+    )
 
     comment_count = models.Comment.objects.filter(post=post_id, parent=None).count()
     comment_list = (
@@ -69,6 +75,7 @@ def post(request: WSGIRequest, blog_name: str, post_id: int):
         "remaining_comments": remaining_comments,
         "number_of_loaded_comments": len(comment_list),
         "comment_form": forms.Comment(initial={"post": post.id}),
+        "can_edit": can_edit,
     }
 
     return render(request, "post.html", context)
@@ -173,15 +180,18 @@ def edit_post(request: WSGIRequest, blog_name: str, post_id: int = -1):
 
     if post_id == -1:
         content = ""
+        post_name = ""
     else:
         post = get_object_or_404(models.Post, id=post_id)
         content = post.content
+        post_name = post.name
 
     context = {
         "blog": blog,
         "content": content,
         "post_id": post_id,
         "blog_name": blog_name,
+        "post_name": post_name,
     }
 
     return render(request, "edit_post.html", context)
@@ -197,6 +207,7 @@ def save_post(request: WSGIRequest):
     html = form.cleaned_data["content"]
     post_id = form.cleaned_data["post_id"]
     blog_name = form.cleaned_data["blog_name"]
+    post_name = form.cleaned_data["post_name"]
 
     html = clean_html.clean_post(html)
 
@@ -214,18 +225,30 @@ def save_post(request: WSGIRequest):
         post = models.Post.objects.get(id=post_id)
 
     post.content = html
+    post.name = post_name
     post.save()
 
     return JsonResponse({"post-id": post.id})
 
 
-def user(request: WSGIRequest, username: str):
-    ...
+def user(request: WSGIRequest, username: str): ...
 
 
 @login_required
 def flag_comment(request: WSGIRequest, comment_id: str):
-    flag = models.CommentFlag()
+    flag = models.Flag()
     flag.comment = get_object_or_404(models.Comment, id=comment_id)
+    flag.user = request.user
     flag.save()
+
+    return HttpResponse()
+
+
+@login_required
+def flag_post(request: WSGIRequest, post_id: str):
+    flag = models.Flag()
+    flag.post = get_object_or_404(models.Post, id=post_id)
+    flag.user = request.user
+    flag.save()
+
     return HttpResponse()

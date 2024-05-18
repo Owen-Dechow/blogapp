@@ -1,157 +1,138 @@
 .size-restrictor {
-    max-width: 800px;
-    margin-inline: auto;
-    margin-top: 20px;
-    padding-inline: 5px;
+  max-width: 800px;
+  margin-top: 20px;
+  margin-inline: auto;
+  padding-inline: 5px;
 }
 
 .head-margin {
-    background-color: var(--grey1);
-    padding: 5px;
-    border-radius: 10px 10px 0 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: var(--grey2);
-}
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px;
+  border-radius: 10px 10px 0 0;
+  color: var(--grey2);
+  background-color: var(--grey1);
 
-.head-margin a {
-    text-decoration: none;
+  & a {
     color: inherit;
-}
+  }
 
-.head-margin a:hover {
-    text-decoration: underline;
-}
+  & span {
+    display: flex;
+    gap: .25em;
+  }
 
+  & form {
+    display: inline-flex;
+    align-items: center;
+  }
+}
 
 .comments {
-    color: var(--light);
-    list-style: none;
-    margin: 0;
-    padding: 0
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--light);
 }
 
 .reply-section ul {
-    list-style: none;
-    margin: 0;
+  margin: 0;
+  list-style: none;
 }
 
 .comment,
 .comment-form {
-    margin-top: 10px;
+  margin-top: 10px;
 }
 
 .comment-content {
-    margin: 0px;
+  margin: 0px;
 }
 
 .background-area {
-    background-color: var(--grey1);
-    border-radius: 3px 10px 10px 10px;
-    padding: 10px;
+  padding: 10px;
+  border-radius: 3px 10px 10px 10px;
+  background-color: var(--grey1);
 }
 
 .comment-user-tag {
-    color: var(--dark);
+  color: var(--dark);
 }
 
-
 .comment-buttons {
-    display: flex;
-    justify-content: right;
-    align-items: center;
-    height: 1rem;
-    gap: 5px;
+  display: flex;
+  justify-content: right;
+  align-items: center;
+  height: 1rem;
+  gap: 5px;
 }
 
 .reply-button {
-    all: unset;
+  all: unset;
 }
 
-.reply-button:hover {
-    cursor: pointer;
-    text-decoration: underline;
-}
+.flag-form button {
+  all: unset;
+  display: flex;
+  height: 1.2rem;
 
-.flag-comment-form button {
-    all: unset;
-    display: flex;
-    height: 1.2rem;
-}
-
-.flag-comment-form button:hover {
+  &:hover {
     filter: brightness(75%);
+  }
 }
-
 
 .comment-form {
-    background-color: var(--grey1);
+  padding: 5px;
+  border-radius: 3px 10px 10px 10px;
+  background-color: var(--grey1);
+
+  & label {
+    display: none;
+  }
+
+  & textarea {
+    width: 100%;
+    height: 80px;
+    box-sizing: border-box;
     padding: 5px;
-    border-radius: 3px 10px 10px 10px;
+    border-radius: 3px 10px 3px 10px;
+    color: var(--dark);
+    background-color: var(--light);
+    resize: vertical;
+  }
 }
 
 .reply-section .comment-form {
-    margin-left: 40px;
-}
-
-.comment-form label {
-    display: none;
-}
-
-.comment-form textarea {
-    resize: vertical;
-    width: 100%;
-    box-sizing: border-box;
-    border-radius: 3px 10px 3px 10px;
-    height: 80px;
-    padding: 5px;
-    background-color: var(--light);
-    color: var(--dark)
+  margin-left: 40px;
 }
 
 .comment-form-buttons {
-    margin-left: auto;
-    width: fit-content;
-}
+  width: fit-content;
+  margin-left: auto;
 
-.comment-form-buttons button {
-    all: unset;
-    color: var(--light);
+  & button {
+    background-color: unset;
+    border: none;
+    font-size: inherit;
+    font-family: inherit;
     margin-left: 5px;
-}
-
-.comment-form-buttons button:hover {
-    text-decoration: underline;
+    color: var(--light);
+  }
 }
 
 .load-replies-button {
-    all: unset;
-    display: block;
-    margin: 0 auto;
-    color: var(--dark);
-    cursor: pointer;
+  all: unset;
+  display: block;
+  margin: 0 auto;
+  color: var(--dark);
+  cursor: pointer;
 }
 
-.load-replies-button:hover {
-    text-decoration: underline;
-}
-
-.comment-user-tag {
-    text-decoration: none;
-}
-
-.comment-user-tag:hover {
-    text-decoration: underline;
-}
 
 .load-more-comments-button {
-    all: unset;
-    display: block;
-    margin-inline: auto;
-    cursor: pointer;
-}
-
-.load-more-comments-button:hover {
-    text-decoration: underline;
+  all: unset;
+  display: block;
+  cursor: pointer;
+  margin-inline: auto;
 }

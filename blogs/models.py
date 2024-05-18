@@ -63,10 +63,8 @@ class Post(models.Model):
 
 
 class Comment(models.Model):
-    __str__ = (
-        lambda self: f"*{self.user} - {self.parent}"
-        if self.parent
-        else f"{self.user} - {self.post}"
+    __str__ = lambda self: (
+        f"*{self.user} - {self.parent}" if self.parent else f"{self.user} - {self.post}"
     )
 
     user = models.ForeignKey(
@@ -90,11 +88,29 @@ class Comment(models.Model):
         ordering = ["-date"]
 
 
-class CommentFlag(models.Model):
-    __str__ = lambda self: f"{self.comment}"
+class Flag(models.Model):
+    __str__ = lambda self: f"{self.comment if self.comment else self.post}"
 
     comment = models.ForeignKey(
-        to="Comment", on_delete=models.CASCADE, related_name="CommentFlag_comment"
+        to="Comment",
+        on_delete=models.CASCADE,
+        related_name="Flag_comment",
+        blank=True,
+        null=True,
+        default=None,
+    )
+
+    post = models.ForeignKey(
+        to="Post",
+        on_delete=models.CASCADE,
+        related_name="Flag_post",
+        blank=True,
+        null=True,
+        default=None,
+    )
+
+    user = models.ForeignKey(
+        to=User, on_delete=models.CASCADE, related_name="Flag_user"
     )
 
 

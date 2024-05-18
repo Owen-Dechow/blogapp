@@ -52,3 +52,6 @@ class SavePost(forms.Form):
         max_length=models.Blog._meta.get_field("name").max_length,
     )
     content = forms.CharField()
+    post_name = forms.CharField(
+        max_length=models.Post._meta.get_field("name").max_length
+    )

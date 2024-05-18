@@ -4,6 +4,7 @@
 
 {% block head %}
   <script src="{% static 'js/comments.js' %}"></script>
+  <script src="{% static 'js/post.js' %}"></script>
   <link href="{% static 'css/post.css' %}" rel="stylesheet" />
 
   <link rel="stylesheet" href="{% static 'vendor/monokai-sublime.min.css' %}" />
@@ -17,8 +18,15 @@
   <div class="size-restrictor">
     <div class="editor-wrapper">
       <div class="head-margin">
-        <span>{{ post.name }}</span>
-        <a href="/u/{{ post.manager.user }}">By: {{ post.manager.user.get_full_name }}</a>
+        <span>
+          {{ post.name }}
+          <form class="flag-post-form flag-form" onsubmit="flagPost(event)">
+            {% csrf_token %}
+            <a class="edit-post" href="/b/{{ post.blog.name }}/edit-post/{{ post.id }}">[edit]</a>
+            <button type="submit" class="flag-btn"><img src="{% static 'media/flag.svg' %}" alt="flag" /></button>
+          </form>
+        </span>
+        <span>By: <a href="/u/{{ post.manager.user }}" class="post-author">{{ post.manager.user.get_full_name }}</a></span>
       </div>
       <cite style="display:none" license="https://github.com/quilljs/quill/blob/develop/LICENSE">
         Copyright (c) 2017, Slab Copyright (c) 2014, Jason Chen Copyright (c) 2013, salesforce.com All rights reserved.
@@ -33,7 +41,7 @@
 
         THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </cite>
-      <div id="post-content" post-id="{{ post_id }}" blog-name="{{ blog_name }}"></div>
+      <div id="post-content" post-id="{{ post.id }}" blog-name="{{ blog_name }}"></div>
 
       <template class="starting-content">{{ post.content|mark_safe }}</template>
 
@@ -64,13 +72,13 @@
 
     <template id="comment-template">
       <li class="comment">
-        <a href="accounts/u/{{ user }}" class="comment-user-tag">@<span class="comment-user">{{ user }}</span></a>
+        <a href="/u/{{ user }}" class="comment-user-tag">@<span class="comment-user">{{ user }}</span></a>
         <div class="background-area">
           <p class="comment-content">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Autem, blanditiis!</p>
           <div class="comment-buttons">
             {% if user.is_authenticated %}
               <button class="reply-button" type="button" onclick="reply(event)">Reply</button>
-              <form class="flag-comment-form" onsubmit="flagComment(event)">
+              <form class="flag-comment-form flag-form" onsubmit="flagComment(event)">
                 {% csrf_token %}
                 <button type="submit"><img src="{% static 'media/flag.svg' %}" alt="flag" /></button>
               </form>

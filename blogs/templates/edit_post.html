@@ -16,10 +16,11 @@
 {% block main %}
   <div class="editor-wrapper">
     <div class="head-margin">
-      <a target="_blank" href="https://quilljs.com/">Powered By Quill</a>
       <form class="save-post" onsubmit="savePost(event)">
+        <a target="_blank" href="https://quilljs.com/">Powered By Quill</a>
         {% csrf_token %}
         <button type="submit">(No detected changes)</button>
+        <input id="post_name" name="post_name" class="post-title-input" type="text" maxlength="100" placeholder="Post Title..." value="{{ post_name }}" />
       </form>
     </div>
     <cite style="display:none" license="https://github.com/quilljs/quill/blob/develop/LICENSE">
@@ -35,10 +36,7 @@
 
       THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </cite>
-    <div class="banner-select">
-      <img class="banner-img" />
-      <button id="banner-img-select-btn" type="button" onclick="selectBannerImage(event)">Select Banner Image<input onchange="bannerImageSelected(event)" style="display:none" type="file" accept="image/*" /></button>
-    </div>
+
     <div id="editor" post-id="{{ post_id }}" blog-name="{{ blog_name }}"></div>
 
     <template class="starting-content">{{ content|mark_safe }}</template>

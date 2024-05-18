@@ -17,6 +17,7 @@ blogspatterns = [
     path("save-post/", views.save_post, name="save_post"),
     path("u/<str:username>/", views.user, name="user"),
     path("flag-comment/<int:comment_id>", views.flag_comment, name="flag_comment"),
+    path("flag-post/<int:post_id>", views.flag_post, name="flag_post"),
 ]
 
 authpatterns = [
